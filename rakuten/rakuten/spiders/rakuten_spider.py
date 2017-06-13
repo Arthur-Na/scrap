@@ -2,7 +2,7 @@ import scrapy
 
 
 class QuotesSpider(scrapy.Spider):
-    name = "rak"
+    name = "rakuten_jp_bags"
 
     def start_requests(self):
         urls = [
