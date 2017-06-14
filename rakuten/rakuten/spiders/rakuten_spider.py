@@ -1,10 +1,12 @@
 import scrapy
 
 
-class QuotesSpider(scrapy.Spider):
+class BagsSpider(scrapy.Spider):
     name = "rakuten_jp_bags"
 
     def start_requests(self):
+        self.nb_page = getattr(self, 'nb_page', None)
+        self.nb_page = int(self.nb_page) if self.nb_page is not None else -1
         urls = [
             'http://search.rakuten.co.jp/search/mall/luxury+bag/',
         ]
@@ -28,6 +30,7 @@ class QuotesSpider(scrapy.Spider):
                     bags_info.css('span.txtIconShopName a::attr(href)').extract_first(),
             }
         next_page = response.css('div.nextPage a::attr(href)').extract_first()
-        if next_page is not None:
+        self.nb_page -= 1 if self.nb_page > 0 else 0
+        if ((next_page is not None) and (self.nb_page != 0)):
             next_page = response.urljoin(next_page)
             yield scrapy.Request(next_page, callback=self.parse)
